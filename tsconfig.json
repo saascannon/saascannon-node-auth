@@ -1,0 +1,12 @@
+{
+  "extends": "tsconfig/base.json",
+  "include": ["src/**/*"],
+  "exclude": ["dist", "src/**/*.spec.ts"],
+  "compilerOptions": {
+    "esModuleInterop": true,
+    "outDir": "dist",
+    "lib": ["ES2015", "DOM"],
+    "module": "ESNext",
+    "target": "es6"
+  }
+}

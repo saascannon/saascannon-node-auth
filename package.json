@@ -1,0 +1,26 @@
+{
+  "name": "@saascannon/auth",
+  "version": "0.0.1",
+  "description": "Node.js Library for authrizing requests to your apis using Saascannon credentials",
+  "main": "dist/lib.js",
+  "scripts": {
+    "test": "jest",
+    "build": "tsc",
+    "dev": "tsc --watch"
+  },
+  "keywords": [
+    "Saascannon"
+  ],
+  "author": "Saascannon",
+  "license": "MIT",
+  "dependencies": {
+    "jose": "^5.8.0"
+  },
+  "devDependencies": {
+    "@jest/globals": "^29.7.0",
+    "ts-jest": "^29.2.5"
+  },
+  "files": [
+    "dist"
+  ]
+}
