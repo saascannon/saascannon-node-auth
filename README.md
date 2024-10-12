@@ -11,7 +11,7 @@ npm i @saascannon/auth
 ## Initialise the package
 
 ```ts
-import saascannonAuth from "@saascannon/auth";
+import { SaascannonAuth } from "@saascannon/auth";
 
 const scAuth = new SaascannonAuth("https://your-tenant.region.saascannon.app");
 
@@ -30,8 +30,8 @@ const userCanPublishPosts = userAccessTokenDetails.hasPermissionTo([
 If you are using express, you can use some pre-built wrappers for implementing saascannon auth into your service easily.
 
 ```ts
-import saascannonAuth from "@saascannon/auth";
-import expressAuthGuard, { Request } from "@saascannon/auth/express";
+import { SaascannonAuth } from "@saascannon/auth";
+import { expressAuthGuard, Request } from "@saascannon/auth/express";
 import express, { Response, NextFunction } from "express";
 
 const scAuth = new SaascannonAuth("https://your-tenant.region.saascannon.app");

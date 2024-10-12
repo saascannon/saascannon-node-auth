@@ -1,5 +1,5 @@
 export class UnauthorisedError extends Error {
-  public code: string = "unauthorised";
+  public code: string = "unauthorized";
 
   constructor(
     message: string = "The user does not have the required permissions.",

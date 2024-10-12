@@ -1,4 +1,4 @@
-import jose from "jose";
+import * as jose from "jose";
 import { UnauthenticatedError } from "./errors";
 
 export class AuthenticatedUserDetails {
@@ -47,7 +47,7 @@ export class SaascannonAuth {
 
   constructor(domain: string) {
     this.domain = domain;
-    this.jwks = jose.createRemoteJWKSet(new URL(domain));
+    this.jwks = jose.createRemoteJWKSet(new URL("jwks", domain));
   }
 
   public async verifyUserToken(token: string) {

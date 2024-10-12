@@ -26,8 +26,18 @@ export function expressAuthGuard<
         return next(new UnauthenticatedError());
       }
 
+      if (!userAccessToken.startsWith("Bearer ")) {
+        return next(
+          new UnauthenticatedError(
+            "Invalid token format. Expected Bearer token.",
+          ),
+        );
+      }
+
+      const exxtractedToken = userAccessToken.slice(7);
+
       try {
-        const jwtPayload = await scAuth.verifyUserToken(userAccessToken);
+        const jwtPayload = await scAuth.verifyUserToken(exxtractedToken);
         req[options.requestUserKey] = jwtPayload as R[AuthKey];
         next();
       } catch (error) {
@@ -38,6 +48,7 @@ export function expressAuthGuard<
 
   const verifyUserPermissions = (
     requiredPermissions: string | string[] | string[][],
+    errorMessage?: string, // Optionally set a specific error message for this permissions check
   ) => {
     return (req: R, _res: Response, next: NextFunction) => {
       const user = req[options.requestUserKey];
@@ -47,7 +58,7 @@ export function expressAuthGuard<
       }
 
       if (!user.userHasPermissions(requiredPermissions)) {
-        return next(new UnauthorisedError());
+        return next(new UnauthorisedError(errorMessage));
       }
 
       next();
