@@ -8,5 +8,7 @@ export default defineConfig({
   target: "node16", // Target node environment
   platform: "node",
   sourcemap: false,
+  splitting: false,
+  clean: true,
   dts: true, // Generate .d.ts files
 });
