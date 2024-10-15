@@ -2,7 +2,8 @@ import * as jose from "jose";
 import { UnauthenticatedError } from "./errors";
 
 export class AuthenticatedUserDetails {
-  private jwtPayload: Record<string, any>;
+  // The raw decoded JWT payload
+  public jwtPayload: Record<string, any>;
 
   constructor(jwtPayload: Record<string, any>) {
     this.jwtPayload = jwtPayload;
@@ -50,11 +51,16 @@ export class SaascannonAuth {
     this.jwks = jose.createRemoteJWKSet(new URL("jwks", domain));
   }
 
-  public async verifyUserToken(token: string) {
+  public async verifyUserToken(
+    token: string,
+    jwtVerifyOptions: jose.JWTVerifyOptions = {},
+  ) {
     try {
-      const { payload } = await jose.jwtVerify(token, this.jwks, {
-        issuer: this.domain,
-      });
+      const { payload } = await jose.jwtVerify(
+        token,
+        this.jwks,
+        Object.assign({ issuer: this.domain }, jwtVerifyOptions),
+      );
 
       return new AuthenticatedUserDetails(payload);
     } catch (error) {
