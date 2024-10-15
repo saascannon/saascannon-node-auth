@@ -1,8 +1,8 @@
 {
   "name": "@saascannon/auth",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Node.js Library for authorizing requests to your apis using Saascannon credentials",
-  "main": "dist/lib.js",
+  "type": "module",
   "scripts": {
     "test": "jest",
     "build": "tsup",
@@ -28,5 +28,28 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/saascannon/saascannon-node-auth.git"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/lib.d.ts",
+        "default": "./dist/lib.js"
+      },
+      "require": {
+        "types": "./dist/lib.d.cts",
+        "default": "./dist/lib.cjs"
+      }
+    },
+    "./express": {
+      "import": {
+        "types": "./dist/express.d.ts",
+        "default": "./dist/express.js"
+      },
+      "require": {
+        "types": "./dist/express.d.cts",
+        "default": "./dist/express.cjs"
+      }
+    },
+    "./package.json": "./package.json"
   }
 }
