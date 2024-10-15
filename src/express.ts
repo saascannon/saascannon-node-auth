@@ -1,25 +1,29 @@
-import { NextFunction, Response, Request as ExpressRequest } from "express";
+import express, { NextFunction, Response, RequestHandler } from "express";
 import { AuthenticatedUserDetails, SaascannonAuth } from "./lib";
 import { UnauthenticatedError, UnauthorisedError } from "./errors";
+import * as jose from "jose";
 
 type ExpressAuthGuardOptions<AuthKey extends string> = {
   requestUserKey: AuthKey;
 };
 
-export type Request<AuthKey extends string = "auth"> = ExpressRequest & {
-  [key in AuthKey]: AuthenticatedUserDetails;
+export type Request<AuthKey extends string = "auth"> = express.Request & {
+  [key in AuthKey]?: AuthenticatedUserDetails;
 };
 
 export function expressAuthGuard<
-  R extends Request<AuthKey>,
   AuthKey extends string = "auth",
+  R extends Request<AuthKey> = Request<AuthKey>, // Use your custom `Request<AuthKey>` type directly
 >(
   options: ExpressAuthGuardOptions<AuthKey> = {
     requestUserKey: "auth" as AuthKey,
   },
 ) {
-  const verifyUserCredential = (scAuth: SaascannonAuth) => {
-    return async (req: R, _res: Response, next: NextFunction) => {
+  const verifyUserCredential = (
+    scAuth: SaascannonAuth,
+    jwtVerifyOptions?: jose.JWTVerifyOptions,
+  ): RequestHandler => {
+    return async (req: express.Request, _res: Response, next: NextFunction) => {
       const userAccessToken = req.headers.authorization;
 
       if (!userAccessToken) {
@@ -34,11 +38,16 @@ export function expressAuthGuard<
         );
       }
 
-      const exxtractedToken = userAccessToken.slice(7);
+      const extractedToken = userAccessToken.slice(7);
 
       try {
-        const jwtPayload = await scAuth.verifyUserToken(exxtractedToken);
-        req[options.requestUserKey] = jwtPayload as R[AuthKey];
+        const jwtPayload = await scAuth.verifyUserToken(
+          extractedToken,
+          jwtVerifyOptions,
+        );
+
+        // Explicitly cast `req` to `R` and assign the JWT payload to the `AuthKey` field
+        (req as R)[options.requestUserKey] = jwtPayload as R[AuthKey];
         next();
       } catch (error) {
         return next(new UnauthenticatedError());
@@ -48,10 +57,11 @@ export function expressAuthGuard<
 
   const verifyUserPermissions = (
     requiredPermissions: string | string[] | string[][],
-    errorMessage?: string, // Optionally set a specific error message for this permissions check
-  ) => {
-    return (req: R, _res: Response, next: NextFunction) => {
-      const user = req[options.requestUserKey];
+    errorMessage?: string,
+  ): RequestHandler => {
+    return (req: express.Request, _res: Response, next: NextFunction) => {
+      // Ensure the `req` object is cast to `R` and access the user through `AuthKey`
+      const user = (req as R)[options.requestUserKey];
 
       if (!user) {
         return next(new UnauthenticatedError());
